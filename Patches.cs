@@ -52,14 +52,14 @@ namespace CustomLanguages
         private static void GameSession_SaveJournal(On.GameSession.orig_SaveJournal orig, GameSession self, string save, bool isDemo)
         {
             orig(self, save, isDemo);
-            foreach (var lang in CustomLanguages.GetCustomLanguages()) lang.SaveJournalSaveData();
+            foreach (var lang in Polyglot.GetCustomLanguages()) lang.SaveJournalSaveData();
         }
 
         private static void LanguageController_Init(On.LanguageController.orig_Init orig, LanguageController self)
         {
             orig(self);
             var allLanguages = ReflectionHelper.GetField<LanguageController, LanguageData[]>(self, "allLanguages").ToList();
-            foreach (var lang in CustomLanguages.GetCustomLanguages())
+            foreach (var lang in Polyglot.GetCustomLanguages())
             {
                 lang.BuildLanguageData();
                 allLanguages.Add(lang.GetLanguageData());
@@ -70,7 +70,7 @@ namespace CustomLanguages
         private static void LanguageController_Load(On.LanguageController.orig_Load orig, LanguageController self, Journal journal)
         {
             orig(self, journal);
-            foreach (var lang in CustomLanguages.GetCustomLanguages())
+            foreach (var lang in Polyglot.GetCustomLanguages())
             {
                 lang.GetLanguageData().Load(lang.LoadJournalSaveData(), self.defaultRuneState, journal);
                 lang.GetJournalLanguageUI().SelectPage(-1);
@@ -79,52 +79,52 @@ namespace CustomLanguages
 
         private static LanguageData LanguageController_GetLanguageData(On.LanguageController.orig_GetLanguageData orig, LanguageController self, LanguageType type)
         {
-            var lang = CustomLanguages.GetCustomLanguages().FirstOrDefault(l => l.languageType == type);
+            var lang = Polyglot.GetCustomLanguages().FirstOrDefault(l => l.languageType == type);
             if (lang != null) return lang.GetLanguageData();
             return orig(self, type);
         }
 
         private static LanguageType LanguageController_GetFirstKnownLanguage(On.LanguageController.orig_GetFirstKnownLanguage orig, LanguageController self)
         {
-            var lang = CustomLanguages.GetCustomLanguages().FirstOrDefault(l => l.GetLanguageData().GetState() != LanguageData.LanguageDataState.UNKNOW);
+            var lang = Polyglot.GetCustomLanguages().FirstOrDefault(l => l.GetLanguageData().GetState() != LanguageData.LanguageDataState.UNKNOW);
             if (lang != null) return lang.languageType;
             return orig(self);
         }
 
         private static bool LanguageController_HasNewRunes(On.LanguageController.orig_HasNewRunes orig, LanguageController self)
         {
-            return orig(self) || (CustomLanguages.GetCustomLanguages().Any() && CustomLanguages.GetCustomLanguages().Any(l => l.GetLanguageData().GetState() == LanguageData.LanguageDataState.NEW));
+            return orig(self) || (Polyglot.GetCustomLanguages().Any() && Polyglot.GetCustomLanguages().Any(l => l.GetLanguageData().GetState() == LanguageData.LanguageDataState.NEW));
         }
 
         private static bool LanguageController_HasKnownLanguage(On.LanguageController.orig_HasKnownLanguage orig, LanguageController self)
         {
-            return orig(self) || (CustomLanguages.GetCustomLanguages().Any() && CustomLanguages.GetCustomLanguages().Any(l => l.GetLanguageData().GetState() != LanguageData.LanguageDataState.UNKNOW));
+            return orig(self) || (Polyglot.GetCustomLanguages().Any() && Polyglot.GetCustomLanguages().Any(l => l.GetLanguageData().GetState() != LanguageData.LanguageDataState.UNKNOW));
         }
 
         private static bool LanguageController_HasAvailablePage(On.LanguageController.orig_HasAvailablePage orig, LanguageController self)
         {
-            return orig(self) || (CustomLanguages.GetCustomLanguages().Any() && CustomLanguages.GetCustomLanguages().Any(l => l.GetLanguageData().HasAvailablePage()));
+            return orig(self) || (Polyglot.GetCustomLanguages().Any() && Polyglot.GetCustomLanguages().Any(l => l.GetLanguageData().HasAvailablePage()));
         }
 
         private static bool LanguageController_HasValidatedRunes(On.LanguageController.orig_HasValidatedRunes orig, LanguageController self)
         {
-            return orig(self) || (CustomLanguages.GetCustomLanguages().Any() && CustomLanguages.GetCustomLanguages().Any(l => l.GetLanguageData().HasValidatedRunes()));
+            return orig(self) || (Polyglot.GetCustomLanguages().Any() && Polyglot.GetCustomLanguages().Any(l => l.GetLanguageData().HasValidatedRunes()));
         }
 
         private static bool LanguageController_HasValidatedLinkedRunes(On.LanguageController.orig_HasValidatedLinkedRunes orig, LanguageController self)
         {
-            return orig(self) || (CustomLanguages.GetCustomLanguages().Any() && CustomLanguages.GetCustomLanguages().Any(l => l.GetLanguageData().HasValidatedLinkedRunes()));
+            return orig(self) || (Polyglot.GetCustomLanguages().Any() && Polyglot.GetCustomLanguages().Any(l => l.GetLanguageData().HasValidatedLinkedRunes()));
         }
 
         private static bool LanguageController_NeedSave(On.LanguageController.orig_NeedSave orig, LanguageController self)
         {
-            return orig(self) || (CustomLanguages.GetCustomLanguages().Any() && CustomLanguages.GetCustomLanguages().Any(l => l.GetLanguageData().NeedSave()));
+            return orig(self) || (Polyglot.GetCustomLanguages().Any() && Polyglot.GetCustomLanguages().Any(l => l.GetLanguageData().NeedSave()));
         }
 
         private static int LanguageController_GetNbValidedRunes(On.LanguageController.orig_GetNbValidedRunes orig, LanguageController self)
         {
             var count = orig(self);
-            foreach (var lang in CustomLanguages.GetCustomLanguages())
+            foreach (var lang in Polyglot.GetCustomLanguages())
             {
                 for (int j = 0; j < lang.GetLanguageData().GetNbRunes(); j++)
                 {
@@ -139,7 +139,7 @@ namespace CustomLanguages
 
         private static void UIController_Init(On.UIController.orig_Init orig, UIController self, Journal journal, TerminalUI newTerminalUI, VisiocodeUI newVisiocodeUI, bool startOnMainMenu)
         {
-            foreach (var lang in CustomLanguages.GetCustomLanguages())
+            foreach (var lang in Polyglot.GetCustomLanguages())
             {
                 lang.BuildJournalLanguageUI();
             }
@@ -152,14 +152,14 @@ namespace CustomLanguages
             // Bit of a hack; this method is called deep in Journal.Loop(), so it's easier to piggyback off a known call instead of patching Loop()
             if (self.language == LanguageType.RECLUS)
             {
-                foreach (var lang in CustomLanguages.GetCustomLanguages()) lang.GetJournalLanguageUI().Resume(targetLanguage, newHasSeveralLanguages, hasAvailablePage);
+                foreach (var lang in Polyglot.GetCustomLanguages()) lang.GetJournalLanguageUI().Resume(targetLanguage, newHasSeveralLanguages, hasAvailablePage);
             }
         }
 
         private static void Journal_Init(On.Journal.orig_Init orig, Journal self)
         {
             orig(self);
-            foreach (var lang in CustomLanguages.GetCustomLanguages()) lang.GetJournalLanguageUI().Init(self);
+            foreach (var lang in Polyglot.GetCustomLanguages()) lang.GetJournalLanguageUI().Init(self);
         }
 
         private static bool Journal_SelectOnglet(On.Journal.orig_SelectOnglet orig, Journal self, LanguageType newLanguage)
@@ -167,7 +167,7 @@ namespace CustomLanguages
             var result = orig(self, newLanguage);
             if (result)
             {
-                foreach (var lang in CustomLanguages.GetCustomLanguages()) lang.GetJournalLanguageUI().SelectOnglet(newLanguage);
+                foreach (var lang in Polyglot.GetCustomLanguages()) lang.GetJournalLanguageUI().SelectOnglet(newLanguage);
             }
             return result;
         }
@@ -175,19 +175,19 @@ namespace CustomLanguages
         private static void Journal_UpdateRunes(On.Journal.orig_UpdateRunes orig, Journal self)
         {
             orig(self);
-            foreach (var lang in CustomLanguages.GetCustomLanguages()) lang.GetJournalLanguageUI().UpdateRunes(self.GetLanguage());
+            foreach (var lang in Polyglot.GetCustomLanguages()) lang.GetJournalLanguageUI().UpdateRunes(self.GetLanguage());
         }
 
         private static JournalLanguageUI Journal_GetJournalLanguageUI(On.Journal.orig_GetJournalLanguageUI orig, Journal self, LanguageType searchLanguage)
         {
-            var lang = CustomLanguages.GetCustomLanguages().FirstOrDefault(l => l.languageType == searchLanguage);
+            var lang = Polyglot.GetCustomLanguages().FirstOrDefault(l => l.languageType == searchLanguage);
             if (lang != null) return lang.GetJournalLanguageUI();
             return orig(self, searchLanguage);
         }
 
         private static bool Journal_TryLaunchOngletValidation(On.Journal.orig_TryLaunchOngletValidation orig, Journal self)
         {
-            foreach (var lang in CustomLanguages.GetCustomLanguages())
+            foreach (var lang in Polyglot.GetCustomLanguages())
             {
                 if (self.GetJournalLanguageUI(lang.languageType).ValidOnglet())
                 {
@@ -201,7 +201,7 @@ namespace CustomLanguages
         private static bool Journal_HasNextOnglet(On.Journal.orig_HasNextOnglet orig, Journal self)
         {
             var languageController = GameController.GetInstance().GetLanguageController();
-            for (int i = (int)(self.GetLanguage() + 1); i < 5 + CustomLanguages.GetCustomLanguages().Count(); i++)
+            for (int i = (int)(self.GetLanguage() + 1); i < 5 + Polyglot.GetCustomLanguages().Count(); i++)
             {
                 if (languageController.GetLanguageData((LanguageType)i).GetState() != LanguageData.LanguageDataState.UNKNOW)
                 {
@@ -213,7 +213,7 @@ namespace CustomLanguages
 
         private static bool Journal_HasFoundLinkedPage(On.Journal.orig_HasFoundLinkedPage orig, Journal self)
         {
-            return orig(self) || (CustomLanguages.GetCustomLanguages().Any() && CustomLanguages.GetCustomLanguages().Any(l => l.GetJournalLanguageUI().HasFoundLinkedPage()));
+            return orig(self) || (Polyglot.GetCustomLanguages().Any() && Polyglot.GetCustomLanguages().Any(l => l.GetJournalLanguageUI().HasFoundLinkedPage()));
         }
 
         private static void MouseController_CheckJournalOngletShortcuts(On.MouseController.orig_CheckJournalOngletShortcuts orig, MouseController self, Journal journal)
@@ -223,7 +223,7 @@ namespace CustomLanguages
             {
                 if (Input.GetKeyDown(KeyCode.Alpha6 + i) || Input.GetKeyDown(KeyCode.Keypad6 + i))
                 {
-                    var lang = CustomLanguages.GetCustomLanguages().FirstOrDefault(l => l.languageType == (LanguageType)(5 + i));
+                    var lang = Polyglot.GetCustomLanguages().FirstOrDefault(l => l.languageType == (LanguageType)(5 + i));
                     if (lang != null)
                     {
                         journal.SelectOnglet(lang.languageType);
@@ -240,7 +240,7 @@ namespace CustomLanguages
             if (player.GetButtonDown("Next2"))
             {
                 int nextIndex = (int)(journal.GetLanguage() + 1);
-                while (nextIndex < 5 + CustomLanguages.GetCustomLanguages().Count() && !journal.SelectOnglet((LanguageType)nextIndex))
+                while (nextIndex < 5 + Polyglot.GetCustomLanguages().Count() && !journal.SelectOnglet((LanguageType)nextIndex))
                 {
                     nextIndex++;
                 }
@@ -257,7 +257,7 @@ namespace CustomLanguages
             orig(self);
             var hasTatoos = ReflectionHelper.GetField<PlayerTatoo, bool[]>(self, "hasTatoos").ToList();
             var tatooParticles = ReflectionHelper.GetField<PlayerTatoo, ParticleSystem[]>(self, "tatooParticles").ToList();
-            foreach (var lang in CustomLanguages.GetCustomLanguages())
+            foreach (var lang in Polyglot.GetCustomLanguages())
             {
                 hasTatoos.Add(lang.GetLanguageData().IsTranslated());
                 tatooParticles.Add(tatooParticles[0]);
@@ -278,7 +278,7 @@ namespace CustomLanguages
                 if (currentSpot.IsFinish() || currentSpot.GetType().Equals(typeof(PadSpot)))
                 {
                     humanoid.ChangeSpot(new TatooSpot(), false);
-                    for (int i = 0; i < 5 + CustomLanguages.GetCustomLanguages().Count(); i++)
+                    for (int i = 0; i < 5 + Polyglot.GetCustomLanguages().Count(); i++)
                     {
                         if (!hasTatoos[i] && languageController.GetLanguageData((LanguageType)i).IsTranslated())
                         {
@@ -288,7 +288,7 @@ namespace CustomLanguages
                         }
                     }
                     ReflectionHelper.SetField(self, "needUpgradeTatoos", false);
-                    for (int j = 0; j < 5 + CustomLanguages.GetCustomLanguages().Count(); j++)
+                    for (int j = 0; j < 5 + Polyglot.GetCustomLanguages().Count(); j++)
                     {
                         if (!hasTatoos[j] && languageController.GetLanguageData((LanguageType)j).IsTranslated())
                         {
@@ -322,7 +322,7 @@ namespace CustomLanguages
                 LanguageController languageController = instance.GetLanguageController();
                 Journal journal = instance.GetJournal();
                 bool flag = false;
-                for (int i = 0; i < 5 + CustomLanguages.GetCustomLanguages().Count(); i++)
+                for (int i = 0; i < 5 + Polyglot.GetCustomLanguages().Count(); i++)
                 {
                     if (!hasTatoos[i] && languageController.GetLanguageData((LanguageType)i).IsTranslated())
                     {
@@ -348,7 +348,7 @@ namespace CustomLanguages
             var linkText = i18nTexts[5];
             i18nTexts.Remove(linkText);
             var pictos = self.pictos.ToList();
-            foreach (var lang in CustomLanguages.GetCustomLanguages())
+            foreach (var lang in Polyglot.GetCustomLanguages())
             {
                 var newLangText = langText.Clone($"Text_Custom_{lang.name}");
                 newLangText.i18n = lang.GetCompletedPopupI18NEntry();
@@ -372,7 +372,7 @@ namespace CustomLanguages
         private static void TerminalKeyboardsUI_Init(On.TerminalKeyboardsUI.orig_Init orig, TerminalKeyboardsUI self, Journal journal)
         {
             orig(self, journal);
-            foreach (var lang in CustomLanguages.GetCustomLanguages())
+            foreach (var lang in Polyglot.GetCustomLanguages())
             {
                 lang.BuildTerminalLanguageUI();
             }
@@ -381,14 +381,14 @@ namespace CustomLanguages
         private static void TerminalKeyboardsUI_OnOpen(On.TerminalKeyboardsUI.orig_OnOpen orig, TerminalKeyboardsUI self)
         {
             orig(self);
-            foreach (var lang in CustomLanguages.GetCustomLanguages()) lang.GetTerminalLanguageUI().OnOpen();
+            foreach (var lang in Polyglot.GetCustomLanguages()) lang.GetTerminalLanguageUI().OnOpen();
         }
 
         private static void TerminalKeyboardsUI_Swap(On.TerminalKeyboardsUI.orig_Swap orig, TerminalKeyboardsUI self)
         {
             orig(self);
             var currentLanguage = ReflectionHelper.GetField<TerminalKeyboardsUI, LanguageType>(self, "currentLanguage");
-            var lang = CustomLanguages.GetCustomLanguages().FirstOrDefault(l => l.languageType == currentLanguage);
+            var lang = Polyglot.GetCustomLanguages().FirstOrDefault(l => l.languageType == currentLanguage);
             if (lang != null)
             {
                 ReflectionHelper.GetField<TerminalKeyboardsUI, TerminalLanguageUI>("devotLanguage").Hide();
@@ -398,20 +398,20 @@ namespace CustomLanguages
 
         private static void TerminalKeyboardsUI_HideEnd(On.TerminalKeyboardsUI.orig_HideEnd orig, TerminalKeyboardsUI self)
         {
-            foreach (var lang in CustomLanguages.GetCustomLanguages()) lang.GetTerminalLanguageUI().Hide();
+            foreach (var lang in Polyglot.GetCustomLanguages()) lang.GetTerminalLanguageUI().Hide();
             orig(self);
         }
 
         private static void TerminalKeyboardsUI_Loop(On.TerminalKeyboardsUI.orig_Loop orig, TerminalKeyboardsUI self)
         {
             orig(self);
-            foreach (var lang in CustomLanguages.GetCustomLanguages()) lang.GetTerminalLanguageUI().Loop();
+            foreach (var lang in Polyglot.GetCustomLanguages()) lang.GetTerminalLanguageUI().Loop();
         }
 
         private static TerminalLanguageUI TerminalKeyboardsUI_GetCurrentTerminalLanguage(On.TerminalKeyboardsUI.orig_GetCurrentTerminalLanguage orig, TerminalKeyboardsUI self)
         {
             var currentLanguage = ReflectionHelper.GetField<TerminalKeyboardsUI, LanguageType>(self, "currentLanguage");
-            var lang = CustomLanguages.GetCustomLanguages().FirstOrDefault(l => l.languageType == currentLanguage);
+            var lang = Polyglot.GetCustomLanguages().FirstOrDefault(l => l.languageType == currentLanguage);
             if (lang != null) return lang.GetTerminalLanguageUI();
             return orig(self);
         }

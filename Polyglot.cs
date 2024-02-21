@@ -10,19 +10,19 @@ using UnityEngine;
 
 namespace CustomLanguages
 {
-    public class CustomLanguages : Mod
+    public class Polyglot : Mod
     {
-        public static CustomLanguages instance;
+        public static Polyglot instance;
 
         readonly List<CustomLanguage> customLanguages = new List<CustomLanguage>();
 
         public override string GetVersion() => "1.0.0";
 
-        public CustomLanguages() : base("Custom Languages") { }
+        public Polyglot() : base("Polyglot") { }
 
         public override void Init()
         {
-            Info($"Loaded {nameof(CustomLanguages)}");
+            Info($"Loaded {nameof(Polyglot)}");
 
             instance = this;
 
@@ -54,7 +54,7 @@ namespace CustomLanguages
             RevealLanguages();
         }
 
-        public static CustomLanguages GetInstance()
+        public static Polyglot GetInstance()
             => instance;
 
         public static IEnumerable<CustomLanguage> GetCustomLanguages()

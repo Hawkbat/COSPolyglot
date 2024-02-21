@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CustomLanguages")]
+[assembly: AssemblyTitle("Polyglot")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Default")]
-[assembly: AssemblyProduct("CustomLanguages")]
-[assembly: AssemblyCopyright("Copyright © Default 2024")]
+[assembly: AssemblyCompany("Hawkbar")]
+[assembly: AssemblyProduct("Polyglot")]
+[assembly: AssemblyCopyright("Copyright © Hawkbar 2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

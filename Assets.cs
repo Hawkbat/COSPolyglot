@@ -21,6 +21,6 @@ namespace CustomLanguages
         }
 
         public static string GetAssetsPath()
-            => Path.GetFullPath(Path.Combine(Application.dataPath, "Managed", "Mods", CustomLanguages.GetInstance().GetName(), "assets"));
+            => Path.GetFullPath(Path.Combine(Application.dataPath, "Managed", "Mods", Polyglot.GetInstance().GetName(), "assets"));
     }
 }
