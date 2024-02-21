@@ -28,6 +28,7 @@ namespace CustomLanguages
             On.UIController.Init += UIController_Init;
             On.JournalLanguageUI.Resume += JournalLanguageUI_Resume;
             On.Journal.Init += Journal_Init;
+            On.Journal.Loop += Journal_Loop;
             On.Journal.SelectOnglet += Journal_SelectOnglet;
             On.Journal.UpdateRunes += Journal_UpdateRunes;
             On.Journal.GetJournalLanguageUI += Journal_GetJournalLanguageUI;
@@ -160,6 +161,15 @@ namespace CustomLanguages
         {
             orig(self);
             foreach (var lang in Polyglot.GetCustomLanguages()) lang.GetJournalLanguageUI().Init(self);
+        }
+
+        private static void Journal_Loop(On.Journal.orig_Loop orig, Journal self)
+        {
+            orig(self);
+            foreach (var lang in Polyglot.GetCustomLanguages())
+            {
+                lang.UpdateJournalLanguageUI();
+            }
         }
 
         private static bool Journal_SelectOnglet(On.Journal.orig_SelectOnglet orig, Journal self, LanguageType newLanguage)

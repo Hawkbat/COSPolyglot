@@ -121,6 +121,7 @@ namespace CustomLanguages
 
             // These values were selected somewhat arbitrarily based on the vanilla ones since there's no clear formula
             // First 5 values in each array are the values for the vanilla languages
+            /*
             var newGaucheX = new int[] { -698, -611, -524, -439, -355, -272, -190, -109, -29, 50 }[(int)languageType];
             var newGaucheY = new int[] { 450, 450, 449, 448, 447, 446, 445, 443, 442, 441 }[(int)languageType];
             var newDroiteX = new int[] { -206, -125, -45, 35, 115, 195, 275, 355, 435, 515 }[(int)languageType];
@@ -145,41 +146,65 @@ namespace CustomLanguages
             var ongletLeftBoxY = 760f;
             var ongletRightBoxX = boxRightX;
             var ongletRightBoxY = 790f + 10f * (int)languageType;
+            */
 
-            var suffix = $"{(int)languageType + 1}";
+            // Scrapped the above approach, now laying out the journal tabs vertically on the outsides
+
+            var index = (int)languageType - 5;
+            var ongletLeft3DPos = new Vector3(2.75f, -1f - index, -0.015f);
+            var ongletLeft3DRot = new Vector3(0f, 0f, 270f);
+            var ongletActive3DPos = new Vector3(2.6f, -1f - index, -0.015f);
+            var ongletActive3DRot = new Vector3(0f, 0f, 270f);
+            var ongletRight3DPos = new Vector3(-2.75f, -1f - index, -0.015f);
+            var ongletRight3DRot = new Vector3(0f, 0f, 90f);
+            var ongletLeftUIPos = new Vector3(-950f, -425f - 300f * index, 0f);
+            var ongletActiveUIPos = new Vector3(-910f, -425f - 300f * index, 0f);
+            var ongletRightUIPos = new Vector3(950f, -425f - 300f * index, 0f);
+
+            // These values are definitely wrong since they're in flat space instead of journal surface space
+            // Likely the only good way of setting these is empirically
+            var ongletLeftNewPos = new Vector3(-800f, 350f - 75f * index, 0f);
+            var ongletRightNewPos = new Vector3(235f, 395f - 75f * index, 0f);
+            var ongletLeftBoxPos = new Vector3();
+            var ongletRightBoxPos = new Vector3();
+
+            var suffix = $"Custom_{name}";
 
             langUI.ongletLeft.onglet3D = langUI.ongletLeft.onglet3D.Clone($"onglet_gauche_{suffix}");
-            langUI.ongletLeft.onglet3D.localPosition = new Vector3(ongletLeft3DX, ongletLeft3DY, -0.015f);
+            langUI.ongletLeft.onglet3D.localPosition = ongletLeft3DPos;
+            langUI.ongletLeft.onglet3D.localEulerAngles = ongletLeft3DRot;
             langUI.ongletLeft.ongletUI = langUI.ongletLeft.ongletUI.Clone($"Onglet_gauche_{suffix}");
-            langUI.ongletLeft.ongletUI.localPosition = new Vector3(ongletLeftUIX, ongletLeftUIY, 0f);
+            langUI.ongletLeft.ongletUI.localPosition = ongletLeftUIPos;
             langUI.ongletLeft.ongletUI.GetComponent<JournalOngletImageUI>().language = languageType;
             langUI.ongletLeft.ongletAnimator = langUI.ongletLeft.ongletUI.GetComponent<Animator>();
             langUI.ongletLeft.ongletImg = langUI.ongletLeft.ongletUI.Find("Picto").GetComponent<Image>();
             langUI.ongletLeft.ongletMaskImg = langUI.ongletLeft.ongletUI.Find("Swap").GetComponent<Image>();
             langUI.ongletLeft.ongletNew = langUI.ongletLeft.ongletNew.Clone($"New_gauche_{suffix}");
-            langUI.ongletLeft.ongletNew.transform.localPosition = new Vector3(newGaucheX, newGaucheY, 0f);
+            langUI.ongletLeft.ongletNew.transform.localPosition = ongletLeftNewPos;
             langUI.ongletLeft.ongletBox = langUI.ongletLeft.ongletBox.Clone($"OngletBoxLeft{suffix}");
-            langUI.ongletLeft.ongletBox.transform.localPosition = new Vector3(ongletLeftBoxX, ongletLeftBoxY, 0f);
+            langUI.ongletLeft.ongletBox.transform.localPosition = ongletLeftBoxPos;
             langUI.ongletLeft.ongletBox.language = languageType;
 
             langUI.ongletRight.onglet3D = langUI.ongletRight.onglet3D.Clone($"onglet_droite_{suffix}");
-            langUI.ongletRight.onglet3D.localPosition = new Vector3(ongletRight3DX, ongletRight3DY, -0.015f);
+            langUI.ongletRight.onglet3D.localPosition = ongletRight3DPos;
+            langUI.ongletRight.onglet3D.localEulerAngles = ongletRight3DRot;
             langUI.ongletRight.ongletUI = langUI.ongletRight.ongletUI.Clone($"Onglet_droite_{suffix}");
-            langUI.ongletRight.ongletUI.localPosition = new Vector3(ongletRightUIX, ongletRightUIY, 0f);
+            langUI.ongletRight.ongletUI.localPosition = ongletRightUIPos;
             langUI.ongletRight.ongletUI.GetComponent<JournalOngletImageUI>().language = languageType;
             langUI.ongletRight.ongletAnimator = langUI.ongletRight.ongletUI.GetComponent<Animator>();
             langUI.ongletRight.ongletImg = langUI.ongletRight.ongletUI.Find("Picto").GetComponent<Image>();
             langUI.ongletRight.ongletMaskImg = langUI.ongletRight.ongletUI.Find("Swap").GetComponent<Image>();
             langUI.ongletRight.ongletNew = langUI.ongletRight.ongletNew.Clone($"New_droite_{suffix}");
-            langUI.ongletRight.ongletNew.transform.localPosition = new Vector3(newDroiteX, newDroiteY, 0f);
+            langUI.ongletRight.ongletNew.transform.localPosition = ongletRightNewPos;
             langUI.ongletRight.ongletBox = langUI.ongletRight.ongletBox.Clone($"OngletBoxLeft{suffix}");
-            langUI.ongletRight.ongletBox.transform.localPosition = new Vector3(ongletRightBoxX, ongletRightBoxY, 0f);
+            langUI.ongletRight.ongletBox.transform.localPosition = ongletRightBoxPos;
             langUI.ongletRight.ongletBox.language = languageType;
 
             langUI.ongletActive.onglet3D = langUI.ongletActive.onglet3D.Clone($"onglet_actif_{suffix}");
-            langUI.ongletActive.onglet3D.localPosition = new Vector3(ongletActive3DX, ongletActive3DY, -0.015f);
+            langUI.ongletActive.onglet3D.localPosition = ongletActive3DPos;
+            langUI.ongletActive.onglet3D.localEulerAngles = ongletActive3DRot;
             langUI.ongletActive.ongletUI = langUI.ongletActive.ongletUI.Clone($"Onglet_actif_{suffix}");
-            langUI.ongletActive.ongletUI.localPosition = new Vector3(ongletActiveUIX, ongletActiveUIY, 0f);
+            langUI.ongletActive.ongletUI.localPosition = ongletActiveUIPos;
             langUI.ongletActive.ongletAnimator = langUI.ongletActive.ongletUI.GetComponent<Animator>();
             langUI.ongletActive.ongletImg = langUI.ongletActive.ongletUI.Find("Picto").GetComponent<Image>();
             langUI.ongletActive.ongletMaskImg = langUI.ongletActive.ongletUI.Find("Swap").GetComponent<Image>();
@@ -189,6 +214,23 @@ namespace CustomLanguages
             langUI.availablePages = new JournalLanguageUI.JournalPage[] { };
 
             journalLanguageUI = langUI;
+        }
+
+        public void UpdateJournalLanguageUI()
+        {
+            var leftScreenPos = Camera.main.WorldToScreenPoint(journalLanguageUI.ongletLeft.ongletUI.position);
+            journalLanguageUI.ongletLeft.ongletBox.transform.position = leftScreenPos;
+            journalLanguageUI.ongletLeft.ongletNew.transform.position = leftScreenPos;
+            journalLanguageUI.ongletLeft.ongletNew.transform.localPosition += Vector3.up * 70f;
+            var rightScreenPos = Camera.main.WorldToScreenPoint(journalLanguageUI.ongletRight.ongletUI.position);
+            journalLanguageUI.ongletRight.ongletBox.transform.position = rightScreenPos;
+            journalLanguageUI.ongletRight.ongletNew.transform.position = rightScreenPos;
+            journalLanguageUI.ongletRight.ongletNew.transform.localPosition += Vector3.up * 70f;
+            //journalLanguageUI.ongletLeft.Select(true, true);
+            //journalLanguageUI.ongletLeft.ongletBox.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.5f);
+            //journalLanguageUI.ongletRight.Select(true, true);
+            //journalLanguageUI.ongletRight.ongletBox.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.5f);
+            //journalLanguageUI.ongletActive.Select(true, true);
         }
 
         public void BuildTerminalLanguageUI()
